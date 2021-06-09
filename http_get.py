@@ -19,7 +19,7 @@ def parsHeader():
     dictionary = {}
     while True:
         header = f.readline().decode('ASCII')
-        print(header)
+        #print(header)
         if header == '\r\n':
             return dictionary
         dictionary[header.split(': ')[0].lower()] = header.split(': ')[1].lower()
@@ -29,7 +29,7 @@ def redirection(loc):
     return re.findall('^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?', loc.strip())[0][4]
 
 
-def checkStatusResponse(code, status, dictionary, path):
+def checkStatusResponse(code, status, dictionary, path, f):
     if code == '200':
         return True, path
     if code == '301' or code == '302' or code == '303' or code == '307' or code == '308':
@@ -71,12 +71,13 @@ while True:
     f = s.makefile('rwb')
     f.write(f'GET {pathTail} HTTP/1.1\r\n'.encode('ASCII'))
     f.write(f'Host: {hostName}\r\n'.encode('ASCII'))
-    f.write(f'Accept-charset: UTF-8\r\n\r\n'.encode('ASCII'))
+    f.write(f'Accept-charset: UTF-8\r\n'.encode('ASCII'))
+    f.write('\r\n'.encode('ASCII'))
     f.flush()
 
     codeResponse, statusResponse = splitResponse(f.readline().decode('ASCII'))
     dic = parsHeader()
-    statusCondition, pathTail = checkStatusResponse(codeResponse, statusResponse, dic, pathTail)
+    statusCondition, pathTail = checkStatusResponse(codeResponse, statusResponse, dic, pathTail, f)
 
     if statusCondition:
         break
