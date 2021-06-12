@@ -41,7 +41,7 @@ def checkStatusResponse(code, status, dictionary, path, f):
 
 
 def printContent(dictionary):
-    if 'transfer-encoding' in dic:
+    if 'transfer-encoding' in dictionary:
         while True:
             chunkLength = f.readline().decode('ASCII')
             contentLength = int(chunkLength, 16)
@@ -50,8 +50,8 @@ def printContent(dictionary):
             if not chunk:
                 break
             f.readline()
-    elif 'content-length' in dic:
-        contentLength = int(dic['content-length'])
+    elif 'content-length' in dictionary:
+        contentLength = int(dictionary['content-length'])
         contentData = f.read(contentLength)
         sys.stdout.buffer.write(contentData)
 
